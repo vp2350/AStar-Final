@@ -2,6 +2,8 @@
 #include "Vertex.h"
 #include <cstdlib>
 
+
+
 /*
 Helpful references:
 
@@ -67,8 +69,9 @@ void Vertex::SetHCost(int _endX, int _endY)
 
 	//NOTE: Apparently, according to someone on the discord, there's constant variables for the values of the starting cell. "Look through the top of the files."
 	//I THINK they're referring to the "GetStart" method in the Graph code, but I'm not sure how to access it at this time since VS complains about it not being a static method.
-
-	hCost = (abs(-_endx) + abs(-_endY)) * 2;
+	
+	hCost = abs(_endX-xPos) + abs(_endY-yPos);
+	hCost = hCost * 2;
 }
 
 /* !-------- TO DO ----------!
