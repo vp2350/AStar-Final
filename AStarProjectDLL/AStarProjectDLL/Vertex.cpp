@@ -71,7 +71,7 @@ void Vertex::SetHCost(int _endX, int _endY)
 	//I THINK they're referring to the "GetStart" method in the Graph code, but I'm not sure how to access it at this time since VS complains about it not being a static method.
 	
 	hCost = abs(_endX-xPos) + abs(_endY-yPos);
-	hCost = hCost * 2;
+	hCost *= 2;
 }
 
 /* !-------- TO DO ----------!
@@ -90,19 +90,19 @@ bool Vertex::SetParentIfCheaper(Vertex* _possibleParent)
 	If the end destination cell has been added to the open list, parent it to the current cell and traverse back up the parent tree to the start. We're done.
 	*/
 
-	if (_possibleParent->GetGCost < this->GetGCost || this->parent == NULL)
-	{
+	//if (_possibleParent->GetGCost < this->GetGCost || this->parent == NULL)
+	//{
 		//Reparent it.
 		this->parent = _possibleParent;
 
 		//Change g cost.
-		gCost = (_possibleParent->GetGCost) + 1;
+		gCost = (_possibleParent->GetGCost()) + 1;
 
 		//Recalculate f cost.
 		GetFCost();
 
 		return true;
-	}
+	//}
 
-	return false;
+	//return false;
 }

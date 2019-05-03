@@ -1,6 +1,34 @@
-﻿  AStarProjectDLL.cpp
+﻿  stdafx.cpp
+  AStarProjectDLL.cpp
+  dllmain.cpp
   Graph.cpp
+c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\xutility(3520): error C2678: binary '==': no operator found which takes a left-hand operand of type 'Vertex' (or there is no acceptable conversion)
+  c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\exception(331): note: could be 'bool std::operator ==(const std::exception_ptr &,std::nullptr_t) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\exception(326): note: or       'bool std::operator ==(std::nullptr_t,const std::exception_ptr &) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\exception(321): note: or       'bool std::operator ==(const std::exception_ptr &,const std::exception_ptr &) noexcept'
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\shared\guiddef.h(192): note: or       'bool operator ==(const GUID &,const GUID &)' [found using argument-dependent lookup]
+  c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\xutility(3520): note: while trying to match the argument list '(Vertex, const _Ty)'
+          with
+          [
+              _Ty=Vertex
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\xutility(3533): note: see reference to function template instantiation '_InIt std::_Find_unchecked1<_InIt,_Ty>(_InIt,const _InIt,const _Ty &,std::false_type)' being compiled
+          with
+          [
+              _InIt=Vertex *,
+              _Ty=Vertex
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\enterprise\vc\tools\msvc\14.16.27023\include\xutility(3542): note: see reference to function template instantiation '_InIt std::_Find_unchecked<Vertex*,_Ty>(const _InIt,const _InIt,const _Ty &)' being compiled
+          with
+          [
+              _InIt=Vertex *,
+              _Ty=Vertex
+          ]
+  d:\profiles\wsa8737\source\repos\dsaproject_3_arnold_pahuja2\astarprojectdll\astarprojectdll\graph.cpp(299): note: see reference to function template instantiation '_InIt std::find<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>,Vertex>(_InIt,const _InIt,const _Ty &)' being compiled
+          with
+          [
+              _InIt=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<Vertex>>>,
+              _Ty=Vertex
+          ]
   Vertex.cpp
   Generating Code...
-     Creating library C:\Users\IGMAdmin\Downloads\AStarProject\AStarProjectDLL\Debug\MazeDllP2M3.lib and object C:\Users\IGMAdmin\Downloads\AStarProject\AStarProjectDLL\Debug\MazeDllP2M3.exp
-  AStarProjectDLL.vcxproj -> C:\Users\IGMAdmin\Downloads\AStarProject\AStarProjectDLL\Debug\MazeDllP2M3.dll

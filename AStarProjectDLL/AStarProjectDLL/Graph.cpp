@@ -9,6 +9,7 @@
 
 #include "stdafx.h"
 #include "Graph.h"
+#include "Vertex.h"
 #include <vector>
 using namespace std;
 
@@ -204,12 +205,7 @@ void Graph::CalculateHCosts()
 	}
 }
 
-
-
-
-void Graph::FindPath()
-{
-	// !-------- TO DO ----------!
+// !-------- TO DO ----------!
 	/* PERFORM THE ENTIRE A* ALGORITHM HERE.
 
 	   CALCULATE THE PATH BETWEEN THE START POINT (startX, startY), AND
@@ -246,67 +242,134 @@ void Graph::FindPath()
 		It will ONLY be called once to determine the path. The player will then move
 		along the predetermined path.
 	*/
-
+void Graph::FindPath()
+{
+	
 	path.empty();
 
-	//Get the starting Point
-	Vertex start = GetStart();
+	//Get the starting Point, set up the vectors that will be used to keep track of what cells we checked
+	Vertex currentCell = GetStart();
+	Vertex startingCell = GetStart();
+	//Closed list will be cells that we reached and checked around for better paths.
 	vector<Vertex> closedList;
+	//Open list will be cells that we reached but haven't investigated further yet.
 	vector<Vertex> openList;
-	//Loop through the adjacent cells
-	for (int i = start.xPos-1; i < start.xPos + 1; i++)
+	bool lookingForPath = true;
+	
+	
+	while (lookingForPath)
 	{
-		for (int j = start.yPos - 1; j < start.yPos + 1; j++)
+		
+		//Loop through the adjacent cells
+		for (int i = currentCell.xPos - 1; i < currentCell.xPos + 1; i++)
 		{
-			//Skip the current cell
-			if (i == start.xPos && j == start.yPos)
+			for (int j = currentCell.yPos - 1; j < currentCell.yPos + 1; j++)
 			{
-				continue;
+				
+				//Skip the current cell
+				if (i == currentCell.xPos && j == currentCell.yPos)
+				{
+					continue;
+				}
+
+				//Skip the diagonal cells
+				if (i == currentCell.xPos - 1 && j == currentCell.yPos - 1
+					|| i == currentCell.xPos - 1 && j == currentCell.yPos + 1
+					|| i == currentCell.xPos + 1 && j == currentCell.yPos - 1
+					|| i == currentCell.xPos + 1 && j == currentCell.yPos + 1)
+				{
+					continue;
+				}
+
+				//Making sure it does not check out of bounds
+				if (i<0 || i>mazeWidth - 1 || j<0 || j>mazeHeight - 1)
+				{
+					continue;
+				}
+				
+				//Skip walls
+				if (vertexGraph[i][j].isWall)
+				{
+					continue;
+				}
+
+				//Check if it is on the closed list and skip if it is
+
+				
+				if (std::find(closedList.begin(), closedList.end(), vertexGraph[i][j]) != closedList.end())
+				{
+					continue;
+				}
+				
+				
+				//Check if we found the end
+				if (vertexGraph[i][j].xPos == GetEnd().xPos && vertexGraph[i][j].yPos == GetEnd().yPos)
+				{
+					pathMatchesInput = true;
+
+					//Set the parent for the ending cell to complete path and add it to the closed list.
+					vertexGraph[i][j].SetParentIfCheaper(&currentCell);
+					closedList.push_back(vertexGraph[i][j]);
+
+					vector<Vertex> finalPath;
+
+					//Loop through the cells parents and add them to a path stack
+
+					currentCell = vertexGraph[i][j];
+
+					while (currentCell.GetParent() != &startingCell)
+					{
+						finalPath.insert(finalPath.begin(), *currentCell.GetParent());
+						currentCell = *currentCell.GetParent();
+					}
+
+					lookingForPath = false;
+				}
+						
+				
+				int xDist = vertexGraph[i][j].xPos - currentCell.xPos;
+				int yDist = vertexGraph[i][j].yPos - currentCell.yPos;
+				int moveCost = currentCell.GetGCost();
+
+				
+				if (vertexGraph[i][j].GetParent() == NULL || vertexGraph[i][j].GetGCost() > moveCost)
+				{
+					vertexGraph[i][j].SetParentIfCheaper(&currentCell);
+
+					//If the cell isn't on the open list already, add it.
+					if (find(openList.begin(), openList.end(), vertexGraph[i][j]) != openList.end())
+					{
+						openList.push_back(vertexGraph[i][j]);
+					}
+				}	
+				
 			}
-
-			//Skip the diagonal cells
-			if (i == start.xPos - 1 && j == start.yPos - 1
-				|| i == start.xPos - 1 && j == start.yPos + 1
-				|| i == start.xPos + 1 && j == start.yPos - 1
-				|| i == start.xPos + 1 && j == start.yPos + 1)
-			{
-				continue;
-			}
-
-			//Making sure it does not check out of bounds
-			if (i<0 || i>mazeWidth - 1 || j<0 || j>mazeHeight - 1)
-			{
-				continue;
-			}
-
-			//Skip walls
-			if (vertexGraph[i][j].isWall)
-			{
-				continue;
-			}
-
-			//Check if it is on the closed list and skip if it is
-
-			if (std::find(closedList.begin(), closedList.end(), vertexGraph[i][j]) != closedList.end)
-			{
-				continue;
-			}
-
-			//Check if we found the end
-			if (vertexGraph[i][j].xPos == GetEnd().xPos && vertexGraph[i][j].yPos==GetEnd().yPos)
-			{
-				pathMatchesInput = true;
-
-				//Loop through the cells parents and add them to a path stack
-
-
-			}
-
-
-
 		}
+			
+		//We checked all the valid cells immediately around the current cell, so now we have to check if the open list isn't empty and we can continue.
+		if (openList.empty() == false)
+		{
+			int shortestDistance = openList[0].GetFCost();
+			int shortestIndex = 0;
+			//Determine what the shortest weighted distance is in the open list, i.e. the f cost.
+			for (size_t i = 1; i < openList.size(); i++)
+			{
+				if (openList[i].GetFCost() < shortestDistance)
+				{
+					shortestDistance = openList[i].GetFCost();
+					shortestIndex = i;
+				}
+			}
+
+			currentCell = openList[shortestIndex];
+			closedList.push_back(currentCell);
+			openList.erase(openList.begin() + shortestIndex);
+		}
+		//Otherwise, no path could be found.
+		else
+		{
+			lookingForPath = false;
+		}
+		
 	}
-
-	// Your A* code goes here.
-
 }
