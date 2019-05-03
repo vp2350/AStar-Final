@@ -9,6 +9,7 @@
 
 #include "stdafx.h"
 #include "Graph.h"
+#include <vector>
 using namespace std;
 
 
@@ -248,5 +249,49 @@ void Graph::FindPath()
 
 	path.empty();
 
+	//Get the starting Point
+	Vertex start = GetStart();
+	vector<Vertex> closedList;
+	vector<Vertex> openList;
+	//Loop through the adjacent cells
+	for (int i = start.xPos-1; i < start.xPos + 1; i++)
+	{
+		for (int j = start.yPos - 1; j < start.yPos + 1; j++)
+		{
+			//Skip the current cell
+			if (i == start.xPos && j == start.yPos)
+			{
+				continue;
+			}
+
+			//Skip the diagonal cells
+			if (i == start.xPos - 1 && j == start.yPos - 1
+				|| i == start.xPos - 1 && j == start.yPos + 1
+				|| i == start.xPos + 1 && j == start.yPos - 1
+				|| i == start.xPos + 1 && j == start.yPos + 1)
+			{
+				continue;
+			}
+
+			//Making sure it does not check out of bounds
+			if (i<0 || i>mazeWidth - 1 || j<0 || j>mazeHeight - 1)
+			{
+				continue;
+			}
+
+			//Skip walls
+			if (vertexGraph[i][j].isWall)
+			{
+				continue;
+			}
+
+			//Check if it is on the closed list and skip if it is
+
+
+
+		}
+	}
+
 	// Your A* code goes here.
+
 }
