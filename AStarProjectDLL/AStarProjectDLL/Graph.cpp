@@ -287,6 +287,21 @@ void Graph::FindPath()
 
 			//Check if it is on the closed list and skip if it is
 
+			if (std::find(closedList.begin(), closedList.end(), vertexGraph[i][j]) != closedList.end)
+			{
+				continue;
+			}
+
+			//Check if we found the end
+			if (vertexGraph[i][j].xPos == GetEnd().xPos && vertexGraph[i][j].yPos==GetEnd().yPos)
+			{
+				pathMatchesInput = true;
+
+				//Loop through the cells parents and add them to a path stack
+
+
+			}
+
 
 
 		}
