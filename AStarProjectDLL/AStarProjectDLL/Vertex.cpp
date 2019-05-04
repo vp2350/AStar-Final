@@ -90,8 +90,8 @@ bool Vertex::SetParentIfCheaper(Vertex* _possibleParent)
 	If the end destination cell has been added to the open list, parent it to the current cell and traverse back up the parent tree to the start. We're done.
 	*/
 
-	//if (_possibleParent->GetGCost < this->GetGCost || this->parent == NULL)
-	//{
+	if (_possibleParent->GetGCost() < this->GetGCost() || this->parent == NULL)
+	{
 		//Reparent it.
 		this->parent = _possibleParent;
 
@@ -102,7 +102,7 @@ bool Vertex::SetParentIfCheaper(Vertex* _possibleParent)
 		GetFCost();
 
 		return true;
-	//}
+	}
 
-	//return false;
+	return false;
 }

@@ -11,6 +11,8 @@
 #include "Graph.h"
 #include "Vertex.h"
 #include <vector>
+#include <iostream>
+#include <stack>
 using namespace std;
 
 
@@ -244,7 +246,6 @@ void Graph::CalculateHCosts()
 	*/
 void Graph::FindPath()
 {
-	
 	path.empty();
 
 	//Get the starting Point, set up the vectors that will be used to keep track of what cells we checked
@@ -259,11 +260,13 @@ void Graph::FindPath()
 	
 	while (lookingForPath)
 	{
-		
+		cout << "Current Cell X: " << currentCell.xPos << ", " << "Current Cell Y: " << currentCell.yPos << endl;
+		int j = currentCell.yPos - 1;
 		//Loop through the adjacent cells
-		for (int i = currentCell.xPos - 1; i < currentCell.xPos + 1; i++)
+		for (int i= currentCell.xPos - 1; i < currentCell.xPos + 2; i++)
 		{
-			for (int j = currentCell.yPos - 1; j < currentCell.yPos + 1; j++)
+			j = currentCell.yPos - 1;
+			for (j; j < currentCell.yPos + 2; j++)
 			{
 				
 				//Skip the current cell
@@ -282,7 +285,7 @@ void Graph::FindPath()
 				}
 
 				//Making sure it does not check out of bounds
-				if (i<0 || i>mazeWidth - 1 || j<0 || j>mazeHeight - 1)
+				if (i < 0 || i > mazeWidth - 1 || j < 0 || j > mazeHeight - 1)
 				{
 					continue;
 				}
@@ -294,24 +297,34 @@ void Graph::FindPath()
 				}
 
 				//Check if it is on the closed list and skip if it is
+				//Austin said that the xutility error is caused by us using find() improperly, such as looking for a vertex in a sea of pointers.
+				//Use a for loop manually for the time being.
+				for (int k = 0; k < closedList.size(); k++)
+				{
+					if (vertexGraph[i][j].xPos == closedList[k].xPos && vertexGraph[i][j].yPos == closedList[k].yPos)
+					{
+						continue;
+					}
+				}
 
-				
+				/*
 				if (std::find(closedList.begin(), closedList.end(), vertexGraph[i][j]) != closedList.end())
 				{
 					continue;
 				}
-				
+				*/
 				
 				//Check if we found the end
 				if (vertexGraph[i][j].xPos == GetEnd().xPos && vertexGraph[i][j].yPos == GetEnd().yPos)
 				{
-					pathMatchesInput = true;
-
 					//Set the parent for the ending cell to complete path and add it to the closed list.
-					vertexGraph[i][j].SetParentIfCheaper(&currentCell);
-					closedList.push_back(vertexGraph[i][j]);
 
-					vector<Vertex> finalPath;
+					//Problem: The way this code is set up, it currently makes it so that it sets itself as its parent. Questionable implications aside, this prevents us from reaching the end point.
+					//Solution: Make it so that it gets the actual content of the overloaded value instead of just the reference to it.
+					vertexGraph[i][j].SetParentIfCheaper(&currentCell);
+					
+					closedList.push_back(vertexGraph[i][j]);
+					path.push(GetEnd());
 
 					//Loop through the cells parents and add them to a path stack
 
@@ -319,11 +332,12 @@ void Graph::FindPath()
 
 					while (currentCell.GetParent() != &startingCell)
 					{
-						finalPath.insert(finalPath.begin(), *currentCell.GetParent());
+						path.push(*currentCell.GetParent());
 						currentCell = *currentCell.GetParent();
 					}
 
 					lookingForPath = false;
+					pathMatchesInput = true;
 				}
 						
 				
@@ -337,33 +351,53 @@ void Graph::FindPath()
 					vertexGraph[i][j].SetParentIfCheaper(&currentCell);
 
 					//If the cell isn't on the open list already, add it.
+					//Austin said that the xutility error is caused by us using find() improperly, such as looking for a vertex in a sea of pointers.
+					//Use a for loop manually for the time being.
+					if (!openList.empty())
+					{
+						for (int l = 0; l < openList.size(); l++)
+						{
+							if (!(vertexGraph[i][j].xPos == openList[l].xPos && vertexGraph[i][j].yPos == openList[l].yPos))
+							{
+								openList.push_back(vertexGraph[i][j]);
+								l = openList.size();
+							}
+						}
+					}
+					else
+					{
+						openList.push_back(vertexGraph[i][j]);
+					}
+					/*
 					if (find(openList.begin(), openList.end(), vertexGraph[i][j]) != openList.end())
 					{
 						openList.push_back(vertexGraph[i][j]);
 					}
-				}	
-				
+					*/
+				}				
 			}
 		}
 			
 		//We checked all the valid cells immediately around the current cell, so now we have to check if the open list isn't empty and we can continue.
-		if (openList.empty() == false)
+		if (openList.size() != 0)
 		{
 			int shortestDistance = openList[0].GetFCost();
 			int shortestIndex = 0;
 			//Determine what the shortest weighted distance is in the open list, i.e. the f cost.
-			for (size_t i = 1; i < openList.size(); i++)
+			for (size_t m = 0; m < openList.size(); m++)
 			{
-				if (openList[i].GetFCost() < shortestDistance)
+				if (openList[m].GetFCost() < shortestDistance)
 				{
-					shortestDistance = openList[i].GetFCost();
-					shortestIndex = i;
+					shortestDistance = openList[m].GetFCost();
+					shortestIndex = m;
 				}
 			}
 
 			currentCell = openList[shortestIndex];
 			closedList.push_back(currentCell);
 			openList.erase(openList.begin() + shortestIndex);
+			//i = currentCell.xPos - 1;
+			//j = currentCell.yPos - 1;
 		}
 		//Otherwise, no path could be found.
 		else
